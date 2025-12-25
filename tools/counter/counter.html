@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🙏 Naam Jaap Counter</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🙏</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Dark mode classes */
+        .dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .dark .bg-white {
+            background-color: #1e293b !important;
+        }
+        
+        .dark .text-gray-800 {
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .text-gray-600 {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark .text-gray-700 {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark .text-gray-500 {
+            color: #94a3b8 !important;
+        }
+        
+        .dark .border-gray-200 {
+            border-color: #334155 !important;
+        }
+        
+        .dark .border-gray-300 {
+            border-color: #475569 !important;
+        }
+        
+        .dark input {
+            background-color: #334155 !important;
+            color: #f1f5f9 !important;
+        }
+        
+        .dark input::placeholder {
+            color: #94a3b8 !important;
+        }
+        
+        .dark .bg-purple-100 {
+            background-color: #4c1d95 !important;
+        }
+        
+        .dark .text-purple-700 {
+            color: #e9d5ff !important;
+        }
+        
+        .dark .bg-blue-100 {
+            background-color: #1e3a8a !important;
+        }
+        
+        .dark .text-blue-700 {
+            color: #bfdbfe !important;
+        }
+        
+        .dark .bg-red-100 {
+            background-color: #7f1d1d !important;
+        }
+        
+        .dark .text-red-700 {
+            color: #fecaca !important;
+        }
+        
+        .dark .bg-green-100 {
+            background-color: #14532d !important;
+        }
+        
+        .dark .text-green-700 {
+            color: #bbf7d0 !important;
+        }
+        
+        .dark .bg-yellow-100 {
+            background-color: #713f12 !important;
+        }
+        
+        .dark .text-yellow-700 {
+            color: #fef08a !important;
+        }
+        
+        .dark .bg-indigo-100 {
+            background-color: #312e81 !important;
+        }
+        
+        .dark .text-indigo-700 {
+            color: #c7d2fe !important;
+        }
+        
+        .dark .bg-gray-200 {
+            background-color: #374151 !important;
+        }
+        
+        .dark .text-gray-800 {
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .bg-purple-50 {
+            background-color: #4c1d95 !important;
+        }
+        
+        .dark .bg-indigo-50 {
+            background-color: #1e3a8a !important;
+        }
+        
+        .dark .text-purple-600 {
+            color: #c084fc !important;
+        }
+        
+        .dark .text-purple-500 {
+            color: #d8b4fe !important;
+        }
+        
+        /* Name Drop Animation */
+        .name-drop {
+            position: fixed;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #7c3aed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: dropAndFade 2s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes dropAndFade {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(10deg);
+                opacity: 0;
+            }
+        }
+        
+        .dark .name-drop {
+            color: #a855f7;
+            text-shadow: 2px 2px 8px rgba(168, 85, 247, 0.5);
+        }
+        
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple:active::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: ripple-effect 0.6s ease-out;
+        }
+        
+        @keyframes ripple-effect {
+            to {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-count {
+            animation: pulse 0.3s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .dark .gradient-bg {
+            background: linear-gradient(135deg, #5b21b6 0%, #6b21a8 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .dark .btn-primary {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Glass effect for cards */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Enhanced shadows */
+        .enhanced-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .dark .enhanced-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Naam Jaap Button Realistic Press Animation */
+        #jaapBtn {
+            position: relative;
+            background: radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #jaapBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+        
+        #jaapBtn:active, #jaapBtn.pressing {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3), inset 0 4px 8px rgba(0, 0, 0, 0.3);
+            background: radial-gradient(circle at 50% 50%, #6d28d9, #5b21b6);
+        }
+        
+        /* Ripple wave effect on press */
+        @keyframes press-ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .press-wave {
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+            animation: press-ripple 0.6s ease-out;
+            pointer-events: none;
+        }
+        
+        /* Scrolling Headline Animation */
+        .scrolling-headline {
+            background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 50%, #8b5cf6 100%);
+            background-size: 200% 100%;
+            animation: gradient-shift 3s ease infinite;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .scrolling-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-left 25s linear infinite;
+        }
+        
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .pulse-dot {
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-indigo-100 min-h-screen">
+    
+    <!-- Live Activity Scrolling Headline -->
+    <div class="scrolling-headline py-3 shadow-lg">
+        <div class="scrolling-text text-white font-semibold text-sm md:text-base">
+            <span class="inline-flex items-center gap-2 mx-8">
+                <span class="w-2 h-2 bg-green-400 rounded-full pulse-dot"></span>
+                <span id="liveUsers">1,24,847</span> devotees chanting right now
+            </span>
+            <span class="inline-flex items-center gap-2 mx-8">
+                🙏 <span id="totalMalasGlobal">4,58,932</span> total malas completed today
+            </span>
+            <span class="inline-flex items-center gap-2 mx-8">
+                💿 <span id="totalChantsGlobal">4,95,64,656</span> total chants today
+            </span>
+            <span class="inline-flex items-center gap-2 mx-8">
+                ✨ <span id="onlineNow">2,45,678</span> people online globally
+            </span>
+            <span class="inline-flex items-center gap-2 mx-8">
+                🌟 <span id="activeMalas">8,932</span> malas in progress
+            </span>
+            <span class="inline-flex items-center gap-2 mx-8">
+                🏆 <span id="completedToday">56,789</span> devotees completed 108+ today
+            </span>
+            <span class="inline-flex items-center gap-2 mx-8">
+                🔥 <span id="streakUsers">12,345</span> users on 7+ day streak
+            </span>
+        </div>
+    </div>
+    
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle" class="fixed top-4 right-4 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg z-50 hover:scale-110 transition-transform glass-effect">
+        <svg id="sunIcon" class="w-6 h-6 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="moonIcon" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+    
+    <!-- Back to Home Button -->
+    <a href="../../index.html" class="fixed top-4 left-4 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg z-50 hover:scale-110 transition-transform glass-effect">
+        <svg class="w-6 h-6 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+    </a>
+    
+    <!-- Setup Screen - User Details -->
+    <div id="setupScreen" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="glass-effect rounded-3xl enhanced-shadow p-8 max-w-md w-full fade-in">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4">🙏</div>
+                <h1 class="text-4xl font-bold text-purple-600 mb-2">Naam Jaap</h1>
+                <p class="text-gray-600">Enter Your Details</p>
+            </div>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                    <input type="text" id="userNameInput" 
+                           placeholder="e.g., Ram Prakash"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Isht Dev Name (Name to Chant)</label>
+                    <input type="text" id="ishtNameInput" 
+                           placeholder="e.g., Radhe Krishna, Hare Ram, Om Namah Shivay"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition">
+                </div>
+                
+                <button id="startBtn" class="w-full btn-primary text-white py-4 rounded-xl font-semibold text-lg ripple shadow-lg">
+                    Start
+                </button>
+                
+                <p id="setupError" class="text-red-500 text-sm text-center hidden"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Naam Jaap Screen -->
+    <div id="jaapScreen" class="hidden min-h-screen p-4 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Header Card -->
+            <div class="glass-effect rounded-2xl enhanced-shadow p-6 mb-6 fade-in">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-2xl lg:text-3xl font-bold text-gray-800">🙏 Namaste, <span id="displayUserName" class="text-purple-600"></span></h2>
+                        <p class="text-gray-600 mt-1 text-base lg:text-lg">Chanting: <span id="displayIshtName" class="font-semibold text-purple-500"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid - 2 Columns on Desktop -->
+            <div class="grid lg:grid-cols-2 gap-6">
+                
+                <!-- Left Column: Counter and Button -->
+                <div class="space-y-6">
+                    <!-- Counter Display -->
+                    <div class="gradient-bg rounded-3xl enhanced-shadow fade-in relative overflow-hidden" style="min-height: 50vh;">
+                        
+                        <!-- Background Watermark Text -->
+                        <div id="backgroundName" class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                            <p class="text-white font-black select-none whitespace-nowrap" style="font-size: clamp(4rem, 12vw, 10rem);"></p>
+                        </div>
+                        
+                        <div class="text-center relative z-10 flex flex-col items-center justify-center" style="min-height: 50vh; padding: 2rem;">
+                            <p class="counter-title text-white text-xl lg:text-2xl mb-4 opacity-90 font-medium transition-all duration-300">Total Naam Jaap</p>
+                            <h1 id="counterDisplay" class="font-bold text-white mb-6 tracking-wider drop-shadow-2xl transition-all duration-300" style="font-size: clamp(2.5rem, 10vw, 8rem); line-height: 1.2; width: 100%; max-width: 90%; overflow-wrap: break-word;">0</h1>
+                        </div>
+                    </div>
+
+                    <!-- Jaap Button -->
+                    <div class="text-center">
+                        <button id="jaapBtn" class="w-full max-w-lg mx-auto btn-primary text-white py-8 lg:py-12 rounded-full font-bold text-3xl lg:text-5xl ripple shadow-2xl transform hover:scale-105 active:scale-95 transition-all select-none">
+                            🙏 Naam Jaap 🙏
+                        </button>
+                        <p class="text-gray-500 text-xs lg:text-sm mt-3">Click button or press keyboard shortcut</p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Mala, Progress, Stats -->
+                <div class="space-y-6">
+                    
+                    <!-- Mala (Rosary) Animation -->
+                    <div class="glass-effect rounded-xl enhanced-shadow p-6">
+                        <h3 class="text-lg lg:text-xl font-semibold text-gray-800 mb-4 text-center flex items-center justify-center gap-2">
+                            💿 Digital Mala
+                        </h3>
+                        <div class="relative">
+                            <!-- Mala Circle -->
+                            <svg id="malaCircle" class="w-full" style="height: 280px;" viewBox="0 0 200 200">
+                                <!-- Background circle -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#e0e0e0" stroke-width="2" class="dark:stroke-gray-600"/>
+                                
+                                <!-- Beads will be added here dynamically -->
+                                <g id="malaBeads"></g>
+                            </svg>
+                            
+                            <!-- Center text showing current mala progress -->
+                            <div class="absolute inset-0 flex items-center justify-center flex-col">
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Current Mala</p>
+                                <p id="malaProgress" class="text-4xl font-bold text-purple-600">0/108</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Completed: <span id="malaCount" class="font-bold">0</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge Progress Bar -->
+                    <div class="glass-effect rounded-xl enhanced-shadow p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-lg font-semibold text-gray-800">🎯 Current Challenge</h3>
+                            <span id="challengeLevel" class="text-sm font-bold text-purple-600 bg-purple-100 dark:bg-purple-900 px-3 py-1 rounded-full">Level 1</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">Goal: <span id="currentGoal" class="font-bold text-purple-600">108</span> Jaaps</p>
+                        
+                        <!-- Progress Bar -->
+                        <div class="relative w-full h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
+                            <div id="progressBar" class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 flex items-center justify-end pr-3">
+                                <span id="progressPercent" class="text-white font-bold text-sm">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span id="currentProgress">0</span>
+                            <span id="targetProgress">108</span>
+                        </div>
+                    </div>
+
+                    <!-- Today's Stats -->
+                    <div class="glass-effect rounded-xl enhanced-shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                            📊 Today's Progress
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 rounded-lg bg-purple-50 dark:bg-purple-900/30">
+                                <p class="text-gray-600 font-medium text-sm mb-1">Today</p>
+                                <p id="todayCount" class="text-3xl font-bold text-purple-600">0</p>
+                            </div>
+                            <div class="text-center p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/30">
+                                <p class="text-gray-600 font-medium text-sm mb-1">This Month</p>
+                                <p id="monthCount" class="text-3xl font-bold text-purple-600">0</p>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-3 text-center">
+                            Last Update: <span id="lastUpdate" class="font-semibold">now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brahmacharya Challenge Section -->
+            <div class="mt-6">
+                <a href="../brahmacharya/brahmacharya.html" class="block glass-effect rounded-xl enhanced-shadow p-6 hover:scale-[1.02] transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 mb-2">
+                                🔥 Brahmacharya Challenge
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300">पवित्रता की यात्रा - Track your journey to purity (10 Years Challenge)</p>
+                        </div>
+                        <div class="text-5xl">→</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Settings Section - Full Width Below -->
+            <div class="mt-6">
+                <div class="glass-effect rounded-xl enhanced-shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        ⚙️ Settings & Controls
+                    </h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <button id="soundToggleBtn" class="px-4 py-3 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition ripple flex items-center justify-between shadow-sm">
+                            <span class="flex items-center gap-2">
+                                🔊 Sound
+                            </span>
+                            <span id="soundStatus" class="text-sm font-semibold px-3 py-1 bg-purple-200 dark:bg-purple-800 rounded-full">ON</span>
+                        </button>
+                        <button id="vibrationToggleBtn" class="px-4 py-3 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition ripple flex items-center justify-between shadow-sm">
+                            <span class="flex items-center gap-2">
+                                📳 Vibration
+                            </span>
+                            <span id="vibrationStatus" class="text-sm font-semibold px-3 py-1 bg-blue-200 dark:bg-blue-800 rounded-full">ON</span>
+                        </button>
+                        <button id="nameRainToggleBtn" class="px-4 py-3 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition ripple flex items-center justify-between shadow-sm">
+                            <span class="flex items-center gap-2">
+                                🌧️ Name Rain
+                            </span>
+                            <span id="nameRainStatus" class="text-sm font-semibold px-3 py-1 bg-indigo-200 dark:bg-indigo-800 rounded-full">ON</span>
+                        </button>
+                        <button id="keyboardShortcutBtn" class="px-4 py-3 bg-pink-100 text-pink-700 rounded-lg hover:bg-pink-200 transition ripple flex items-center justify-between shadow-sm">
+                            <span class="flex items-center gap-2">
+                                ⌨️ Shortcut
+                            </span>
+                            <span id="selectedKeyDisplay" class="text-sm font-semibold px-3 py-1 bg-pink-200 dark:bg-pink-800 rounded-full">Enter</span>
+                        </button>
+                        <button id="exportBtn" class="px-4 py-3 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition ripple shadow-sm">
+                            📤 Export Data
+                        </button>
+                        <button id="importBtn" class="px-4 py-3 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition ripple shadow-sm">
+                            📥 Import Data
+                        </button>
+                        <button id="resetCountBtn" class="px-4 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition ripple shadow-sm">
+                            🔄 Reset Count
+                        </button>
+                        <button id="resetUserBtn" class="px-4 py-3 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition ripple shadow-sm">
+                            🔄 Change User
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Credit -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                    Made with <span class="text-red-500 animate-pulse">❤️</span> in India by - 
+                    <a href="https://www.linkedin.com/in/rajdeep-pandit-22b543282/" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-700 font-semibold hover:underline transition">
+                        Rajdeep Pandit
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-2xl enhanced-shadow p-8 max-w-md w-full fade-in">
+            <div class="text-center mb-4">
+                <div class="text-6xl mb-4">⚠️</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Reset Counter?</h3>
+            </div>
+            <p class="text-gray-600 mb-6 text-center">Are you sure you want to reset your Naam Jaap count? This cannot be undone.</p>
+            <div class="flex gap-4">
+                <button id="cancelResetBtn" class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition ripple font-semibold shadow-md">
+                    Cancel
+                </button>
+                <button id="confirmResetBtn" class="flex-1 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition ripple font-semibold shadow-md">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-2xl enhanced-shadow p-8 max-w-md w-full fade-in">
+            <div class="text-center mb-4">
+                <div class="text-6xl mb-4">📥</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Import Data</h3>
+            </div>
+            <p class="text-gray-600 mb-4 text-center">Upload your exported JSON file here:</p>
+            <input type="file" id="importFileInput" accept=".json" class="w-full mb-4 border-2 border-gray-300 rounded-lg p-3">
+            <div class="flex gap-4">
+                <button id="cancelImportBtn" class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition ripple font-semibold shadow-md">
+                    Cancel
+                </button>
+                <button id="confirmImportBtn" class="flex-1 px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ripple font-semibold shadow-md">
+                    Import
+                </button>
+            </div>
+            <p id="importError" class="mt-4 text-red-500 text-sm text-center hidden"></p>
+        </div>
+    </div>
+
+    <!-- Congratulations Modal -->
+    <div id="congratsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-2xl enhanced-shadow p-8 max-w-md w-full fade-in text-center">
+            <div class="text-8xl mb-4 animate-bounce">🎉</div>
+            <h3 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">Congratulations!</h3>
+            <p class="text-xl text-gray-800 mb-4">Challenge Completed! 🏆</p>
+            <p class="text-gray-600 mb-2">You've completed <span id="completedGoal" class="font-bold text-purple-600">108</span> Naam Jaaps!</p>
+            <p class="text-gray-600 mb-6">Next Challenge: <span id="nextGoal" class="font-bold text-purple-600">216</span> Jaaps</p>
+            <button id="closeCongrats" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold hover:scale-105 transition ripple shadow-lg">
+                Continue 🙏
+            </button>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcut Selection Modal -->
+    <div id="keyboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-2xl enhanced-shadow p-8 max-w-2xl w-full fade-in">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4">⌨️</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Choose Keyboard Shortcut</h3>
+                <p class="text-gray-600 text-sm">Select a key to use for counting</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- Common Keys -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Common Keys</h4>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="selectKey('Enter')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-semibold transition shadow-sm">
+                            Enter
+                        </button>
+                        <button onclick="selectKey('Space')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-semibold transition shadow-sm">
+                            Space
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Letter Keys -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Letter Keys</h4>
+                    <div class="grid grid-cols-6 gap-2">
+                        <button onclick="selectKey('KeyA')" class="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition shadow-sm">A</button>
+                        <button onclick="selectKey('KeyS')" class="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition shadow-sm">S</button>
+                        <button onclick="selectKey('KeyD')" class="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition shadow-sm">D</button>
+                        <button onclick="selectKey('KeyJ')" class="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition shadow-sm">J</button>
+                        <button onclick="selectKey('KeyK')" class="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition shadow-sm">K</button>
+                        <button onclick="selectKey('KeyL')" class="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition shadow-sm">L</button>
+                    </div>
+                </div>
+
+                <!-- Number Keys -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Number Keys</h4>
+                    <div class="grid grid-cols-6 gap-2">
+                        <button onclick="selectKey('Digit0')" class="px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg font-semibold transition shadow-sm">0</button>
+                        <button onclick="selectKey('Digit1')" class="px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg font-semibold transition shadow-sm">1</button>
+                        <button onclick="selectKey('Digit2')" class="px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg font-semibold transition shadow-sm">2</button>
+                        <button onclick="selectKey('Digit3')" class="px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg font-semibold transition shadow-sm">3</button>
+                        <button onclick="selectKey('Digit4')" class="px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg font-semibold transition shadow-sm">4</button>
+                        <button onclick="selectKey('Digit5')" class="px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg font-semibold transition shadow-sm">5</button>
+                    </div>
+                </div>
+
+                <!-- Arrow Keys -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Arrow Keys</h4>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="selectKey('ArrowUp')" class="px-4 py-3 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg font-semibold transition shadow-sm">↑ Up</button>
+                        <button onclick="selectKey('ArrowDown')" class="px-4 py-3 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg font-semibold transition shadow-sm">↓ Down</button>
+                        <button onclick="selectKey('ArrowLeft')" class="px-4 py-3 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg font-semibold transition shadow-sm">← Left</button>
+                        <button onclick="selectKey('ArrowRight')" class="px-4 py-3 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg font-semibold transition shadow-sm">→ Right</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="closeKeyboardModal" class="w-full mt-6 px-4 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold shadow-md">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" class="hidden">
+
+    <script src="app.js"></script>
+</body>
+</html>
