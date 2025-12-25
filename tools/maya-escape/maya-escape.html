@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>🧘 Maya Escape - Spiritual Game</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🙏</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        
+        .dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .dark .text-gray-800 {
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .text-gray-600 {
+            color: #cbd5e1 !important;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #gameCanvas {
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .game-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .obstacle {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-effect {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        /* Fullscreen styles */
+        .fullscreen-container {
+            position: relative;
+        }
+        
+        .fullscreen-container.active {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .fullscreen-container.active #gameCanvas {
+            max-width: 100vw;
+            max-height: 100vh;
+            width: auto !important;
+            height: auto !important;
+        }
+        
+        /* Mobile touch controls */
+        .mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            padding: 0 20px;
+        }
+        
+        .fullscreen-container.active .mobile-controls {
+            display: flex;
+        }
+        
+        .touch-button {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .touch-button:active {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0.95);
+        }
+        
+        @media (max-width: 768px) {
+            #gameCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-indigo-100 min-h-screen">
+    
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle" class="fixed top-4 right-4 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg z-50 hover:scale-110 transition-transform">
+        <svg id="sunIcon" class="w-6 h-6 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="moonIcon" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+    
+    <!-- Back to Home -->
+    <a href="../../index.html" class="fixed top-4 left-4 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg z-50 hover:scale-110 transition-transform">
+        <svg class="w-6 h-6 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+    </a>
+
+    <div class="min-h-screen p-4 lg:p-8 pt-20">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Game Header -->
+            <div class="glass-effect rounded-2xl p-6 mb-6 text-center">
+                <div class="text-6xl mb-3">🧘</div>
+                <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+                    Maya Escape
+                </h1>
+                <p class="text-gray-600 dark:text-gray-300">Escape the illusions of Maya and reach spiritual liberation!</p>
+            </div>
+
+            <!-- Game Info & Controls -->
+            <div class="grid lg:grid-cols-3 gap-6 mb-6">
+                
+                <!-- Score Card -->
+                <div class="glass-effect rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                        🎯 Score
+                    </h3>
+                    <div class="text-5xl font-bold text-purple-600 dark:text-purple-400" id="scoreDisplay">0</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Points earned</p>
+                </div>
+
+                <!-- Lives Card -->
+                <div class="glass-effect rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                        ❤️ Lives
+                    </h3>
+                    <div class="text-5xl font-bold text-red-500" id="livesDisplay">3</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Chances remaining</p>
+                </div>
+
+                <!-- Level Card -->
+                <div class="glass-effect rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                        🏆 Level
+                    </h3>
+                    <div class="text-5xl font-bold text-green-600 dark:text-green-400" id="levelDisplay">1</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Current stage</p>
+                </div>
+            </div>
+
+            <!-- Game Canvas Container -->
+            <div class="glass-effect rounded-2xl p-6 mb-6 fullscreen-container" id="canvasContainer">
+                <canvas id="gameCanvas" width="800" height="500" class="mx-auto"></canvas>
+                
+                <!-- Fullscreen Button -->
+                <button id="fullscreenBtn" class="absolute top-4 right-4 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg hover:scale-110 transition-transform z-10">
+                    <svg id="fullscreenIcon" class="w-6 h-6 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                    </svg>
+                    <svg id="exitFullscreenIcon" class="w-6 h-6 text-gray-700 dark:text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+                <!-- Mobile Touch Controls -->
+                <div class="mobile-controls">
+                    <div class="flex justify-between items-center w-full max-w-md mx-auto">
+                        <button id="moveLeftBtn" class="touch-button">←</button>
+                        <button id="jumpBtn" class="touch-button">↑</button>
+                        <button id="moveRightBtn" class="touch-button">→</button>
+                    </div>
+                </div>
+                
+                <!-- Game Controls -->
+                <div class="text-center mt-6">
+                    <button id="startBtn" class="game-button text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg mr-4">
+                        🎮 Start Game
+                    </button>
+                    <button id="pauseBtn" class="bg-gray-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hidden">
+                        ⏸️ Pause
+                    </button>
+                </div>
+
+                <!-- Instructions -->
+                <div class="mt-6 grid md:grid-cols-2 gap-4">
+                    <div class="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-2">🎮 Controls</h4>
+                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                            <li>• <strong>Arrow Keys</strong> or <strong>WASD</strong> - Move</li>
+                            <li>• <strong>Space</strong> - Jump</li>
+                            <li>• <strong>P</strong> - Pause</li>
+                            <li>• <strong>F</strong> - Fullscreen</li>
+                            <li>• <strong>Mobile</strong> - Touch buttons in fullscreen</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-2">🎯 Collectibles (Level 2+)</h4>
+                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                            <li>• <strong>1️⃣</strong> +1 life, +10 points (common)</li>
+                            <li>• <strong>2️⃣</strong> +2 lives, +10 points (medium jump)</li>
+                            <li>• <strong>3️⃣</strong> +3 lives, +10 points (high jump)</li>
+                            <li>• <strong>🕉️ Om</strong> +10 lives, +10 points (very rare!)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maya Obstacles Guide -->
+            <div class="glass-effect rounded-2xl p-6 mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">
+                    ⚠️ Maya - The Illusions to Avoid
+                </h3>
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                        <div class="text-4xl mb-2">💰</div>
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-1">Greed</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-300">Attachment to wealth</p>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 dark:bg-orange-900/30 rounded-lg">
+                        <div class="text-4xl mb-2">😠</div>
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-1">Anger</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-300">Destructive emotion</p>
+                    </div>
+                    <div class="text-center p-4 bg-pink-50 dark:bg-pink-900/30 rounded-lg">
+                        <div class="text-4xl mb-2">🎭</div>
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-1">Ego</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-300">False identity</p>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                        <div class="text-4xl mb-2">😴</div>
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-1">Ignorance</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-300">Spiritual blindness</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High Scores -->
+            <div class="glass-effect rounded-2xl p-6 mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">🏆 Your Best Scores</h3>
+                <div class="space-y-2" id="highScoresList">
+                    <p class="text-gray-600 dark:text-gray-300 text-center">Play to set your first score!</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center">
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                    Made with <span class="text-red-500 animate-pulse">❤️</span> in India by - 
+                    <a href="https://www.linkedin.com/in/rajdeep-pandit-22b543282/" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 font-semibold hover:underline transition">
+                        Rajdeep Pandit
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-2xl p-8 max-w-md w-full text-center">
+            <div class="text-7xl mb-4">🙏</div>
+            <h3 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
+                Game Over
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-2">You were caught by Maya's illusions</p>
+            <div class="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4 mb-6">
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Final Score</p>
+                <p class="text-5xl font-bold text-purple-600 dark:text-purple-400" id="finalScore">0</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Level Reached: <span id="finalLevel">1</span></p>
+            </div>
+            <button id="playAgainBtn" class="game-button text-white px-8 py-3 rounded-xl font-bold shadow-lg w-full">
+                🔄 Try Again
+            </button>
+        </div>
+    </div>
+
+    <script src="maya-escape.js"></script>
+</body>
+</html>
